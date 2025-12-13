@@ -18,12 +18,27 @@ OPENSKY_CLIENT_SECRET = os.getenv("OPENSKY_CLIENT_SECRET")
 
 
 class OpenSkyAuthError(Exception):
+    """
+    Exception raised for OpenSky authentication-related errors.
+    The error is logged automatically when instantiated.
+    """
     def __init__(self, message):
         logger.error(f"OpenSky Authentication Error: {message}")
         super().__init__(message)
 
 
 def _request_new_token() -> Tuple[str, float]:
+    """
+    Request a new OAuth2 access token from OpenSky.
+    Returns:
+        Tuple[str, float]
+            A tuple containing:
+            - the access token
+            - the absolute expiration timestamp (epoch seconds)
+    Raises:
+        OpenSkyAuthError
+            If the token request fails or the response is invalid.
+    """
     
     data = {
         "grant_type": "client_credentials",
@@ -54,6 +69,15 @@ def _request_new_token() -> Tuple[str, float]:
 
 
 def get_opensky_token() -> str:
+    """
+    Retrieve a valid OpenSky access token.
+    Returns:
+        str
+            The valid access token.
+    Raises:
+        OpenSkyAuthError
+            If authentication fails or credentials are missing.
+    """
 
     global CACHED_TOKEN, TOKEN_EXPIRATION
 

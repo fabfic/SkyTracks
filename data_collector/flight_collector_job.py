@@ -17,6 +17,14 @@ FLIGHTS_DIRECTION = "all" # can be "arrival", "departure", or "all"
 
 
 def fetch_flights_for_airport(airport_code: str, direction: str) -> tuple:
+    """
+    Fetches flights for a given airport from the OpenSky Network API.
+    Args:
+        airport_code (str): The ICAO code of the airport.
+        direction (str): "arrival" or "departure".
+    Returns:
+        tuple: A list of flight data dictionaries.
+    """
     
     hours_interval = int(os.getenv("FLIGHT_FETCH_INTERVAL_HOURS", "12"))
     end_time = int(time.time())
@@ -43,6 +51,9 @@ def fetch_flights_for_airport(airport_code: str, direction: str) -> tuple:
 ###################################
 
 def scheduled_fetch_flights():
+    """
+    Scheduled job to fetch flights for all interested airports and store them in the database.
+    """
 
     logger.info("Running scheduled OpenSky fetch...")
 
