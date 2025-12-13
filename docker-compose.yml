@@ -1,0 +1,105 @@
+# AUTHOR: fabfic
+services:
+  user_manager:
+    build: ./user_manager
+    container_name: user_manager
+    ports:
+      - "5000:5000"
+      - "5051:5051"
+    environment:
+      - DATABASE_URL=postgresql://user:password@user_db_postgres:5432/userdb
+      - REDIS_URL=redis://redis:6379/0
+      - FLASK_PORT=5000
+      - GRPC_SERVER_PORT=5051
+    depends_on:
+      postgres_user:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - user_management_network
+      - services_network
+    restart: unless-stopped
+
+
+  data_collector:
+    build: ./data_collector
+    container_name: data_collector
+    ports:
+      - "6000:6000"
+    networks:
+      - flight_data_network
+      - services_network
+    environment:
+      - DATABASE_URL=postgresql://user:password@flights_db_postgres:5432/flightsdb
+      - FLASK_PORT=6000
+      - USER_MANAGER_HOST=user_manager
+      - GRPC_SERVER_PORT=5051
+      - OPENSKY_CLIENT_ID=fabfic-api-client
+      - OPENSKY_CLIENT_SECRET=lWFdi8iqj8m6t57WtvmBMg5CmXSdD3J9
+      - FLIGHT_FETCH_INTERVAL_HOURS=12
+    depends_on:
+      postgres_flights:
+        condition: service_healthy
+      user_manager:
+        condition: service_started
+    restart: unless-stopped
+
+  postgres_flights:
+    image: postgres:16
+    container_name: flights_db_postgres
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=flightsdb
+    volumes:
+      - flights_db_data:/var/lib/postgresql/data
+      - ./data_collector/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - flight_data_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d flightsdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  postgres_user:
+    image: postgres:16
+    container_name: user_db_postgres
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=userdb
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+      - ./user_manager/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - user_management_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d userdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: redis
+    networks:
+      - user_management_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  user_db_data:
+  flights_db_data:
+
+networks:
+  user_management_network:
+  flight_data_network:
+  services_network:

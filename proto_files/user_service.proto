@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package userservice;
+
+// Messaggio di richiesta
+message EmailRequest {
+  string email = 1;
+}
+
+// Messaggio di risposta
+message EmailResponse {
+  bool exists = 1;
+}
+
+// Servizio gRPC
+service UserService {
+  rpc CheckEmail (EmailRequest) returns (EmailResponse);
+}

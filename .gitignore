@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-wheel-metadata/
+*.egg-info/
+*.egg
+dist/
+build/
+.pytest_cache/
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Docker
+*.log
+docker/*.log
+docker/*/logs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated gRPC code
+**/*_pb2.py
+**/*_pb2_grpc.py
+
+# Environment files
+.env
+*.env
