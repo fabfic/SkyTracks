@@ -5,7 +5,6 @@ from typing import Optional, Tuple
 from logging_utils import setup_logging
 import logging
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 TOKEN_URL = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"

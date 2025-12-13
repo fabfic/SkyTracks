@@ -8,7 +8,6 @@ from datetime import datetime
 from db_utils import PostgresDB
 from opensky_auth import get_opensky_token
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 db = PostgresDB()
@@ -95,5 +94,6 @@ def scheduled_fetch_flights():
 
         except Exception as e:
             logger.error(f"Error fetching flights for {airport}: {e}")
+            print(f"Error fetching flights for {airport}: {e}")
 
     logger.info("Scheduled job complete.")
