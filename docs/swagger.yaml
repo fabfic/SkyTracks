@@ -1,0 +1,396 @@
+openapi: 3.0.3
+info:
+  title: OpenSky User & Interests API
+  description: API for user management and user airport interests with flight statistics
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: User Endpoints
+  - url: http://localhost:6000
+    description: User Interests Endpoints
+
+tags:
+  - name: Users
+    description: User management endpoints
+  - name: User Interests
+    description: User airport interests and statistics
+
+paths:
+
+  /user:
+    post:
+      tags: [Users]
+      summary: Create a new user
+      description: Creates a new user account
+      parameters:
+        - name: request_id
+          in: header
+          required: true
+          description: Idempotency request identifier
+          schema:
+            type: string
+            example: "req-123456"
+      requestBody:
+        description: User creation payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+            example:
+              email: "john.doe@example.com"
+              username: "johndoe"
+              password: "StrongP@ssword123"
+      responses:
+        '201':
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+              example:
+                message: "User created successfully"
+                user_id: "123e4567-e89b-12d3-a456-426614174000"
+        '400':
+          description: Invalid input or duplicate email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Email already exists"
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Service unavailable"
+
+  /user/{user_id}:
+    delete:
+      tags: [Users]
+      summary: Delete a user
+      description: Deletes an existing user by user ID
+      parameters:
+        - name: request_id
+          in: header
+          required: true
+          description: Idempotency request identifier
+          schema:
+            type: string
+            example: "req-123456"
+        - name: user_id
+          in: path
+          required: true
+          description: User unique identifier
+          schema:
+            type: string
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "User deleted successfully"
+        '400':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "User not found"
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Service temporarily unavailable"
+
+  /user-interests:
+    post:
+      tags: [User Interests]
+      summary: Add airport to user interests
+      description: Associates an airport with a user
+      requestBody:
+        description: User interest association payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInterestRequest'
+            example:
+              email: "john.doe@example.com"
+              airport_code: "EGLL"
+      responses:
+        '201':
+          description: Airport successfully associated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "New airport associated successfully"
+        '400':
+          description: Invalid input or duplicate association
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Airport already associated with user"
+
+    delete:
+      tags: [User Interests]
+      summary: Remove airport from user interests
+      description: Removes an airport from a user's interests
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: User email
+          schema:
+            type: string
+            example: "john.doe@example.com"
+        - name: airport_code
+          in: query
+          required: true
+          description: ICAO airport code
+          schema:
+            type: string
+            example: "EGLL"
+      responses:
+        '200':
+          description: Airport removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: "Airport removed from user's interests successfully"
+
+    get:
+      tags: [User Interests]
+      summary: Get user interests
+      description: Returns all airports associated with a user
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: User email
+          schema:
+            type: string
+            example: "john.doe@example.com"
+      responses:
+        '200':
+          description: List of user interests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInterestsResponse'
+              example:
+                interests:
+                  - "EGLL"
+                  - "LFPG"
+                  - "EDDF"
+
+  /user-interests/lastflights/{airport_code}:
+    get:
+      tags: [User Interests]
+      summary: Get last flights
+      description: Retrieves last arrival and departure flights for an airport
+      parameters:
+        - name: airport_code
+          in: path
+          required: true
+          description: ICAO airport code
+          schema:
+            type: string
+            example: "EGLL"
+      responses:
+        '200':
+          description: Last flights retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LastFlightsResponse'
+              example:
+                last_departure:
+                  callsign: "BA2490"
+                  icao24: "abcd12"
+                  departure_time: "2025-12-13T12:00:00Z"
+                  arrival_time: "2025-12-13T14:00:00Z"
+                  origin_airport: "EGLL"
+                  destination_airport: "EDDF"
+                last_arrival:
+                  callsign: "LH1234"
+                  icao24: "efgh34"
+                  departure_time: "2025-12-13T10:00:00Z"
+                  arrival_time: "2025-12-13T12:00:00Z"
+                  origin_airport: "EDDF"
+                  destination_airport: "EGLL"
+
+  /user-interests/traffic-average:
+    get:
+      tags: [User Interests]
+      summary: Get average traffic
+      description: Returns average daily arrivals and departures
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: User email
+          schema:
+            type: string
+            example: "john.doe@example.com"
+        - name: airport_code
+          in: query
+          required: true
+          description: ICAO airport code
+          schema:
+            type: string
+            example: "EGLL"
+        - name: days
+          in: query
+          required: true
+          description: Number of days to compute the average
+          schema:
+            type: integer
+            minimum: 1
+            example: 7
+      responses:
+        '200':
+          description: Average traffic data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrafficAverageResponse'
+              example:
+                average_departures: 15.3
+                average_arrivals: 14.7
+
+components:
+  schemas:
+
+    CreateUserRequest:
+      description: Payload to create a new user
+      type: object
+      required: [email, username, password]
+      properties:
+        email:
+          type: string
+          example: "john.doe@example.com"
+        username:
+          type: string
+          example: "johndoe"
+        password:
+          type: string
+          example: "StrongP@ssword123"
+
+    CreateUserResponse:
+      description: User creation response
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User created successfully"
+        user_id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+
+    UserInterestRequest:
+      description: Payload to associate a user with an airport
+      type: object
+      required: [email, airport_code]
+      properties:
+        email:
+          type: string
+          example: "john.doe@example.com"
+        airport_code:
+          type: string
+          example: "EGLL"
+
+    UserInterestsResponse:
+      description: List of airports associated with the user
+      type: object
+      properties:
+        interests:
+          type: array
+          items:
+            type: string
+          example: ["EGLL", "LFPG", "EDDF"]
+
+    Flight:
+      description: Flight information
+      type: object
+      properties:
+        callsign:
+          type: string
+          example: "BA2490"
+        icao24:
+          type: string
+          example: "abcd12"
+        departure_time:
+          type: string
+          format: date-time
+          example: "2025-12-13T12:00:00Z"
+        arrival_time:
+          type: string
+          format: date-time
+          example: "2025-12-13T14:00:00Z"
+        origin_airport:
+          type: string
+          example: "EGLL"
+        destination_airport:
+          type: string
+          example: "EDDF"
+
+    LastFlightsResponse:
+      description: Last arrival and departure flights
+      type: object
+      properties:
+        last_departure:
+          description: Last departing flight
+          allOf:
+            - $ref: '#/components/schemas/Flight'
+          nullable: true
+        last_arrival:
+          description: Last arriving flight
+          allOf:
+            - $ref: '#/components/schemas/Flight'
+          nullable: true
+
+    TrafficAverageResponse:
+      description: Average daily traffic
+      type: object
+      properties:
+        average_departures:
+          type: number
+          example: 15.3
+        average_arrivals:
+          type: number
+          example: 14.7
+
+    MessageResponse:
+      description: Generic success message
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operation completed successfully"
+
+    ErrorResponse:
+      description: Error message
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid request or resource not found"

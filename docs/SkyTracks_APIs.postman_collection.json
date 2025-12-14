@@ -1,0 +1,309 @@
+{
+	"info": {
+		"_postman_id": "e06c64eb-2dba-469b-a677-fec393c10ee5",
+		"name": "SkyTracks APIs",
+		"description": "### SkyTracks API collection  \n  \nThis collection provides requests for the SkyTracks microservices APIs. Use these endpoints to register or delete users, manage user airport interests, and interact with flight data. All requests require valid user and airport information where applicable.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50626396",
+		"_collection_link": "https://fabfic-7062537.postman.co/workspace/Fabrizio-Fichera's-Workspace~a7a855a7-b36e-4897-83b4-c7d499f11b74/collection/50626396-e06c64eb-2dba-469b-a677-fec393c10ee5?action=share&source=collection_link&creator=50626396"
+	},
+	"item": [
+		{
+			"name": "/user",
+			"item": [
+				{
+					"name": "/user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "12q3abic",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"alice@example.com\",\n  \"username\": \"alice\",\n  \"password\": \"StrongPass!123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "123abc",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/user/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/user-interests",
+			"item": [
+				{
+					"name": "/user-interests",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "request_id",
+								"value": "123abc",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"alice@example.com\",\n  \"airport_code\": \"LIMC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6000/user-interests",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"user-interests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user-interests",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "request_id",
+								"value": "123abc",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"alice@example.com\",\n  \"airport_code\": \"ABC3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6000/user-interests",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"user-interests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user-interests",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "12q3abc",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:6000/user-interests?email=alice@example.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"user-interests"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "alice@example.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user-interests/lastflights",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "12q3abc",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:6000/user-interests/lastflights/LIMC",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"user-interests",
+								"lastflights",
+								"LIMC"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user-interests/traffic-average",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Request-Id",
+								"value": "12q3abc",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:6000/user-interests/traffic-average?email=alice@example.com&airport_code=LIRF&days=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"user-interests",
+								"traffic-average"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "alice@example.com"
+								},
+								{
+									"key": "airport_code",
+									"value": "LIRF"
+								},
+								{
+									"key": "days",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
