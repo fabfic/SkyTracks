@@ -38,6 +38,8 @@ services:
       - OPENSKY_CLIENT_ID=fabfic-api-client
       - OPENSKY_CLIENT_SECRET=lWFdi8iqj8m6t57WtvmBMg5CmXSdD3J9
       - FLIGHT_FETCH_INTERVAL_HOURS=12
+      - OPENSKY_CB_FAILURE_THRESHOLD=5
+      - OPENSKY_CB_RECOVERY_TIMEOUT=30
     depends_on:
       postgres_flights:
         condition: service_healthy
