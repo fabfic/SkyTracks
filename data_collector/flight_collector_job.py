@@ -10,7 +10,6 @@ from opensky_auth import get_opensky_token
 from circuit_braker import CircuitBreaker, CircuitBreakerOpenException
 
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 db = PostgresDB()
